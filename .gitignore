@@ -1,0 +1,13 @@
+# Eclipse build output
+**/bin/
+**/target/
+
+# Eclipse metadata (workspace-specific)
+.metadata/
+**/.DS_Store
+
+# Eclipse auto-generated files
+**/*.class
+
+# Logs
+*.log

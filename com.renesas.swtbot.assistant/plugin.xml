@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="com.renesas.swtbot.assistant.perspective.AssistantPerspective"
+            id="com.renesas.swtbot.assistant.perspective"
+            name="SWTBot Assistant">
+      </perspective>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="com.renesas.swtbot.assistant"
+            name="SWTBot Assistant">
+      </category>
+      <view
+            category="com.renesas.swtbot.assistant"
+            class="com.renesas.swtbot.assistant.views.TicketView"
+            id="com.renesas.swtbot.assistant.views.TicketView"
+            name="Ticket"
+            restorable="true">
+      </view>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="com.renesas.swtbot.assistant.preferences.PreferencePage"
+            id="com.renesas.swtbot.assistant.preferences.PreferencePage"
+            name="SWTBot Assistant">
+      </page>
+   </extension>
+
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="com.renesas.swtbot.assistant.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="com.renesas.swtbot.assistant.commands"
+            name="SWTBot Assistant Commands">
+      </category>
+      <command
+            categoryId="com.renesas.swtbot.assistant.commands"
+            id="com.renesas.swtbot.assistant.commands.generate"
+            name="Generate Test">
+      </command>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="com.renesas.swtbot.assistant.commands.GenerateCommand"
+            commandId="com.renesas.swtbot.assistant.commands.generate">
+      </handler>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:com.renesas.swtbot.assistant.views.TicketView">
+         <command
+               commandId="com.renesas.swtbot.assistant.commands.generate"
+               style="push"
+               tooltip="Generate SWTBot Test">
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>

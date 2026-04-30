@@ -1,0 +1,3 @@
+eclipse.preferences.version=1
+preferredTargets=default,org.eclipse.pde.ui.junitLaunchConfig
+targetPlatformPath=${workspace_loc:/com.renesas.swtbot.assistant/minimal.target}

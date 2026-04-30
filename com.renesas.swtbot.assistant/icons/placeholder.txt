@@ -1,0 +1,3 @@
+# Icons folder
+# Placeholder - Eclipse icons (.png) should be added here for perspective and view icons
+# Recommended size: 16x16 for view icons, 16x16 for perspective icons

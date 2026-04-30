@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="com.renesas.swtbot.assistant.feature"
+      label="AI SWTBot Assistant"
+      version="1.0.0.qualifier"
+      provider-name="Renesas">
+
+   <description url="http://www.example.com/description">
+      AI-powered SWTBot test generation and execution assistant for Eclipse
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      Copyright (c) 2024 Renesas Electronics Corporation. All rights reserved.
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      Licensed under the Eclipse Public License 2.0
+   </license>
+
+   <plugin
+         id="com.renesas.swtbot.assistant"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

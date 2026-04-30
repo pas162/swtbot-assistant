@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/com.renesas.swtbot.assistant.feature_1.0.0.qualifier.jar" id="com.renesas.swtbot.assistant.feature" version="1.0.0.qualifier">
+      <category name="ai-swtbot-assistant"/>
+   </feature>
+   <category-def name="ai-swtbot-assistant" label="AI SWTBot Assistant"/>
+</site>
