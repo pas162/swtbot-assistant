@@ -134,4 +134,97 @@ public class WorkspaceIndexer {
 			this.content = content;
 		}
 	}
+
+	/**
+	 * Extracts public method signatures from helper/page-object classes.
+	 * Returns list of "ClassName.methodName(params)" for AI context.
+	 */
+	public List<String> extractHelperMethods(IProject project, String helperFolder) {
+		List<String> methods = new ArrayList<>();
+		
+		try {
+			IContainer helperContainer = project.getFolder(helperFolder);
+			if (!helperContainer.exists()) {
+				// Try common locations
+				helperContainer = project.getFolder("src/main/java");
+				if (!helperContainer.exists()) {
+					helperContainer = project.getFolder("src");
+				}
+			}
+			
+			if (helperContainer.exists()) {
+				collectHelperMethods(helperContainer, methods);
+			}
+		} catch (CoreException e) {
+			// Return empty list on error
+		}
+		
+		return methods;
+	}
+	
+	private void collectHelperMethods(IContainer container, List<String> methods) throws CoreException {
+		for (IResource resource : container.members()) {
+			if (resource instanceof IContainer) {
+				collectHelperMethods((IContainer) resource, methods);
+			} else if (resource instanceof IFile && resource.getName().endsWith(".java")) {
+				String content = readFileContent((IFile) resource);
+				if (isHelperClass(content)) {
+					String className = resource.getName().replace(".java", "");
+					extractMethods(content, className, methods);
+				}
+			}
+		}
+	}
+	
+	private boolean isHelperClass(String content) {
+		String lower = content.toLowerCase();
+		// Helper classes typically have these characteristics
+		return (lower.contains("helper") || lower.contains("util") || 
+				lower.contains("page") || lower.contains("action")) &&
+			   !lower.contains("@test") && // Not a test class
+			   content.contains("public");   // Has public methods
+	}
+	
+	private void extractMethods(String content, String className, List<String> methods) {
+		// Simple regex to find public method signatures
+		// Matches: public void methodName(params) or public Type methodName(params)
+		java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(
+			"public\\s+(?:static\\s+)?(?:void|\\w+)\\s+(\\w+)\\s*\\([^)]*\\)");
+		java.util.regex.Matcher matcher = pattern.matcher(content);
+		
+		while (matcher.find()) {
+			String methodName = matcher.group(1);
+			String signature = matcher.group(0);
+			// Skip constructor
+			if (!methodName.equals(className)) {
+				methods.add(className + "." + methodName + "(...)");
+				// Also add full signature with first line of javadoc if available
+				String javadoc = extractJavadocForMethod(content, matcher.start());
+				if (!javadoc.isEmpty()) {
+					methods.add("  // " + javadoc);
+				}
+			}
+		}
+	}
+	
+	private String extractJavadocForMethod(String content, int methodPos) {
+		// Find javadoc comment before this method
+		int searchStart = Math.max(0, methodPos - 500);
+		String before = content.substring(searchStart, methodPos);
+		int javadocStart = before.lastIndexOf("/**");
+		int javadocEnd = before.lastIndexOf("*/");
+		
+		if (javadocStart >= 0 && javadocEnd > javadocStart) {
+			String javadoc = before.substring(javadocStart + 3, javadocEnd).trim();
+			// Take first line only
+			int lineEnd = javadoc.indexOf('\n');
+			if (lineEnd > 0) {
+				javadoc = javadoc.substring(0, lineEnd);
+			}
+			// Remove * at start
+			javadoc = javadoc.replaceAll("^\\s*\\*\\s*", "").trim();
+			return javadoc.length() > 60 ? javadoc.substring(0, 60) + "..." : javadoc;
+		}
+		return "";
+	}
 }
