@@ -14,14 +14,14 @@
 
 ## Overview
 
-**AI SWTBot Assistant** là một Eclipse plugin giúp tự động hóa việc tạo test cases cho e² studio IDE sử dụng SWTBot framework.
+**AI SWTBot Assistant** is an Eclipse plugin that automates the creation of test cases for the e² studio IDE using the SWTBot framework.
 
 ### Key Features
-- **Jira Integration**: Fetch test cases từ Jira/Zephyr với PAT authentication
-- **AI Code Generation**: Sử dụng LLM (OpenAI-compatible API) để generate SWTBot test code
-- **Self-Healing Agent**: Tự động phát hiện và sửa lỗi trong code được generate
-- **Workspace Indexing**: Tìm kiếm và đề xuất helper methods từ codebase hiện tại
-- **Two-Column Display**: Hiển thị test steps trong bảng 2 cột (Step | Expected Result)
+- **Jira Integration**: Fetch test cases from Jira/Zephyr with PAT authentication
+- **AI Code Generation**: Use LLM (OpenAI-compatible API) to generate SWTBot test code
+- **Self-Healing Agent**: Automatically detect and fix errors in generated code
+- **Workspace Indexing**: Search and suggest helper methods from existing codebase
+- **Two-Column Display**: Display test steps in a 2-column table (Step | Expected Result)
 
 ### Tech Stack
 - **Platform**: Eclipse RCP (Rich Client Platform)
@@ -72,55 +72,55 @@
 ### 1. UI Layer (`views/`)
 
 #### `TicketView.java`
-- **Purpose**: Main UI view hiển thị Jira ticket và test steps
+- **Purpose**: Main UI view to display Jira ticket and test steps
 - **Features**:
-  - Input field cho Jira ticket key (e.g., RSC-23001)
-  - "Fetch" button để lấy dữ liệu từ Jira
-  - Two-column table hiển thị test steps
-  - Status label hiển thị kết quả fetch
-  - Generate button để tạo test code
+  - Input field for Jira ticket key (e.g., RSC-23001)
+  - "Fetch" button to retrieve data from Jira
+  - Two-column table to display test steps
+  - Status label to show fetch results
+  - Generate button to create test code
 - **Key Methods**:
-  - `fetchTicket()`: Gọi ZephyrClient để fetch ticket
-  - `displayTicket()`: Cập nhật UI với ticket data
-  - `createStepsSection()`: Tạo table 2 cột
+  - `fetchTicket()`: Call ZephyrClient to fetch ticket
+  - `displayTicket()`: Update UI with ticket data
+  - `createStepsSection()`: Create 2-column table
 
 #### `PackageSelectionDialog.java`
-- **Purpose**: Dialog để chọn package destination cho generated test
-- **Features**: Tree view hiển thị cấu trúc package trong project
+- **Purpose**: Dialog to select package destination for generated test
+- **Features**: Tree view displaying package structure in project
 
 ---
 
 ### 2. Commands (`commands/`)
 
 #### `GenerateCommand.java`
-- **Purpose**: Handler cho "Generate SWTBot Test" command
+- **Purpose**: Handler for "Generate SWTBot Test" command
 - **Flow**:
-  1. Lấy ticket data từ TicketView
-  2. Kiểm tra project và package selection
-  3. Gọi AgentIntegration để generate code
-  4. Tạo hoặc update test file
-- **Integration Point**: Sử dụng `SelfHealingAgent` thay vì gọi LLM trực tiếp
+  1. Get ticket data from TicketView
+  2. Verify project and package selection
+  3. Call AgentIntegration to generate code
+  4. Create or update test file
+- **Integration Point**: Uses `SelfHealingAgent` instead of calling LLM directly
 
 ---
 
 ### 3. Jira Integration (`jira/`)
 
 #### `ZephyrClient.java`
-- **Purpose**: Client để gọi Jira REST API và Zephyr API
+- **Purpose**: Client to call Jira REST API and Zephyr API
 - **Authentication**: Bearer Token (PAT - Personal Access Token)
 - **Endpoints**:
   - Jira Issue API: `/rest/api/2/issue/{key}`
   - Zephyr Test Steps: `/rest/zapi/latest/teststep/{id}`
-- **Retry Logic**: Thử nhiều endpoint Zephyr khác nhau
-- **Response Parsing**: Handle nhiều định dạng JSON khác nhau
+- **Retry Logic**: Try multiple Zephyr endpoints
+- **Response Parsing**: Handle various JSON formats
 
 #### `TicketData.java`
-- **Purpose**: Data model cho Jira ticket
+- **Purpose**: Data model for Jira ticket
 - **Fields**:
   - `key`: Ticket ID (e.g., RSC-23001)
   - `name`: Summary/title
-  - `description`: Mô tả test case
-  - `precondition`: Điều kiện tiên quyết
+  - `description`: Test case description
+  - `precondition`: Precondition requirements
   - `steps`: List of `TestStep`
 - **Nested Class**: `TestStep` (index, description, expectedResult)
 
@@ -140,22 +140,22 @@
 - **Error Handling**: HTTP status check, JSON parsing
 
 #### `SwtbotPromptBuilder.java`
-- **Purpose**: Xây dựng prompts cho LLM
-- **System Prompt**: Định nghĩa rules và output format
-- **User Prompt**: Kết hợp ticket info + test steps + examples
-- **Keyword Extraction**: Từ name, description, steps để tìm relevant examples
+- **Purpose**: Build prompts for LLM
+- **System Prompt**: Define rules and output format
+- **User Prompt**: Combine ticket info + test steps + examples
+- **Keyword Extraction**: From name, description, steps to find relevant examples
 
 ---
 
 ### 5. Workspace Indexing (`indexer/`)
 
 #### `WorkspaceIndexer.java`
-- **Purpose**: Tìm kiếm và index code trong workspace
+- **Purpose**: Search and index code in workspace
 - **Features**:
-  - `findRelevantExamples()`: Tìm SWTBot test files liên quan
-  - `extractHelperMethods()`: Trích xuất public methods từ helper classes
-- **Scoring Algorithm**: Keyword matching với domain weights
-- **Helper Detection**: Nhận diện classes có tên chứa "Helper", "Util", "Page", "Action"
+  - `findRelevantExamples()`: Find relevant SWTBot test files
+  - `extractHelperMethods()`: Extract public methods from helper classes
+- **Scoring Algorithm**: Keyword matching with domain weights
+- **Helper Detection**: Identify classes with names containing "Helper", "Util", "Page", "Action"
 - **Method Extraction**: Parse method signatures + javadoc
 
 ---
@@ -172,19 +172,19 @@
   - `P_JIRA_TOKEN`: Jira PAT
 
 #### `PreferencePage.java`
-- **Purpose**: UI cho Eclipse preferences
-- **Fields**: String editors cho tất cả settings
+- **Purpose**: UI for Eclipse preferences
+- **Fields**: String editors for all settings
 
 #### `PreferenceInitializer.java`
-- **Purpose**: Set default values cho preferences
+- **Purpose**: Set default values for preferences
 
 ---
 
 ### 7. Utilities (`util/`)
 
 #### `BuildValidator.java`
-- **Purpose**: Runtime diagnostics cho Eclipse dependencies
-- **Usage**: Gọi từ Activator để verify build
+- **Purpose**: Runtime diagnostics for Eclipse dependencies
+- **Usage**: Call from Activator to verify build
 - **Checks**: Eclipse UI, SWT, JFace, Core Runtime, Gson
 
 ---
@@ -192,7 +192,7 @@
 ## Self-Healing Agent System
 
 ### Overview
-Self-healing agent tự động phát hiện và sửa lỗi trong code được AI generate, giảm thiểu manual fixing.
+Self-healing agent automatically detects and fixes errors in AI-generated code, minimizing manual fixing.
 
 ### Architecture
 
@@ -224,24 +224,24 @@ Self-healing agent tự động phát hiện và sửa lỗi trong code được
 ### Components
 
 #### `SelfHealingAgent.java`
-- **Orchestrator**: Điều phối quá trình generate → validate → fix
-- **Max Iterations**: 3 lần retry
-- **Result**: `GenerationResult` chứa code, log, success/fail status
+- **Orchestrator**: Coordinate the generate → validate → fix process
+- **Max Iterations**: 3 retry attempts
+- **Result**: `GenerationResult` containing code, log, success/fail status
 
 #### `SyntaxValidator.java`
-- **Purpose**: Lightweight validation (không cần full compilation)
+- **Purpose**: Lightweight validation (no full compilation needed)
 - **Checks**:
   - Bot method typos (`bot.buton()` → `bot.button()`)
   - Missing imports (detect class names)
-  - Shell patterns (cần `.activate()`)
+  - Shell patterns (requires `.activate()`)
   - Syntax structure (class declaration)
 
 #### `ErrorAnalyzer.java`
-- **Purpose**: Phân tích errors và xác định strategy
-- **Output**: `ErrorAnalysis` với categorized errors
+- **Purpose**: Analyze errors and determine strategy
+- **Output**: `ErrorAnalysis` with categorized errors
 
 #### `ErrorAnalysis.java`
-- **Data Model**: Kết quả phân tích
+- **Data Model**: Analysis result
 - **Categorization**: `UNDEFINED_METHOD`, `MISSING_IMPORT`, `SYNTAX_ERROR`
 - **Extracted Info**: undefined methods, missing imports
 
@@ -250,25 +250,25 @@ Self-healing agent tự động phát hiện và sửa lỗi trong code được
 - **Fields**: line, column, message, type, offendingCode
 
 #### `ValidationResult.java`
-- **Data Model**: Kết quả validation
+- **Data Model**: Validation result
 - **Fields**: valid (boolean), list of errors
 
 #### `CodeFixer.java`
-- **Purpose**: Tự động sửa lỗi
+- **Purpose**: Automatically fix errors
 - **Fix Types**:
   1. **Typos**: Map<String, String> common corrections
-  2. **Imports**: Thêm import statements
+  2. **Imports**: Add import statements
   3. **Shell Patterns**: Fix `bot.shell()` usage
-  4. **Helper Suggestions**: Gợi ý DDRHelper, PinHelper, etc.
+  4. **Helper Suggestions**: Suggest DDRHelper, PinHelper, etc.
 
 #### `FixResult.java`
-- **Data Model**: Kết quả sau khi fix
+- **Data Model**: Result after fix
 - **Fields**: originalCode, fixedCode, appliedFixes, fixCount
 
 #### `AgentIntegration.java`
-- **Purpose**: Integration point với Eclipse UI
-- **Settings**: Lấy từ preferences (endpoint, apiKey, model)
-- **Progress**: Hỗ trợ IProgressMonitor
+- **Purpose**: Integration point with Eclipse UI
+- **Settings**: Get from preferences (endpoint, apiKey, model)
+- **Progress**: Supports IProgressMonitor
 
 ---
 
@@ -474,13 +474,13 @@ Window → Preferences → AI SWTBot Assistant
 1. Open AI SWTBot Assistant view
 2. Enter ticket key (e.g., `RSC-23001`)
 3. Click **Fetch**
-4. Xem test steps trong table
+4. View test steps in table
 
 **Generate Test**:
 1. Select target project
 2. Click **Generate**
-3. Chọn package destination
-4. Xem healing log trong console
+3. Select package destination
+4. View healing log in console
 5. Review generated code
 
 ### 3. Self-Healing Output Example
@@ -507,7 +507,7 @@ Analysis: 1 UNDEFINED_METHOD error(s), 1 MISSING_IMPORT error(s)
 
 ## Extension Points
 
-### Thêm New Fix Strategy
+### Add New Fix Strategy
 
 Edit `CodeFixer.java`:
 
@@ -518,7 +518,7 @@ private String applyCustomFix(String code, List<String> appliedFixes) {
 }
 ```
 
-### Thêm New Validation Rule
+### Add New Validation Rule
 
 Edit `SyntaxValidator.java`:
 
@@ -566,15 +566,15 @@ private void checkCustomRule(String code, List<CompileError> errors) {
 ### Adding New Features
 
 1. **New UI Component**: Extend `TicketView.java` or create new ViewPart
-2. **New AI Provider**: Extend `LlmClient.java` hoặc tạo subclass
-3. **New Fix Strategy**: Thêm method trong `CodeFixer.java`
-4. **New Validation**: Thêm check trong `SyntaxValidator.java`
+2. **New AI Provider**: Extend `LlmClient.java` or create subclass
+3. **New Fix Strategy**: Add method in `CodeFixer.java`
+4. **New Validation**: Add check in `SyntaxValidator.java`
 
 ### Testing
 
-- Unit tests: Add JUnit tests trong `src/test/java`
-- Manual testing: Launch Eclipse Application từ Run menu
-- Debug: Use Eclipse debugger với breakpoints trong agent classes
+- Unit tests: Add JUnit tests in `src/test/java`
+- Manual testing: Launch Eclipse Application from Run menu
+- Debug: Use Eclipse debugger with breakpoints in agent classes
 
 ---
 
